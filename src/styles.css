@@ -149,9 +149,9 @@ button { color: inherit; }
 .feature-content .place { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin: 0 0 17px; color: var(--text); font-size: .79rem; font-weight: 650; }
 .feature-content .place span { color: var(--faint); }
 .feature-content > p:last-child { margin: 0; color: var(--muted); font-size: .82rem; line-height: 1.7; }
-.seminar-card { background: var(--dark-panel); color: white; border-color: #252832; }
-.seminar-card .place, .seminar-card .feature-content h3 { color: white; }
-.seminar-card .feature-content > p:last-child { color: #aeb3bd; }
+.seminar-card { background: var(--surface); color: var(--text); border-color: var(--border); }
+.seminar-card .place, .seminar-card .feature-content h3 { color: var(--text); }
+.seminar-card .feature-content > p:last-child { color: var(--muted); }
 
 .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 17px; }
 .skill-card { padding: 27px; border: 1px solid var(--border); border-radius: 15px; background: var(--surface); }
@@ -174,12 +174,12 @@ button { color: inherit; }
 .contact-links svg { grid-row: span 2; color: var(--accent); }
 .contact-links small { color: var(--faint); font-size: .63rem; text-transform: uppercase; letter-spacing: .1em; }
 .contact-links strong { margin-top: 4px; font-size: .78rem; }
-.site-footer { color: #9ea4af; background: #090a0c; border-top: 1px solid #24262d; }
+.site-footer { color: var(--muted); background: var(--surface-alt); border-top: 1px solid var(--border); }
 .footer-inner { min-height: 105px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .footer-inner > div { display: flex; flex-direction: column; gap: 5px; }
-.footer-inner strong { color: white; font-size: .8rem; }
+.footer-inner strong { color: var(--text); font-size: .8rem; }
 .footer-inner span, .footer-inner p, .footer-inner button { font-size: .65rem; }
-.footer-inner button { padding: 10px 0; display: flex; align-items: center; gap: 7px; border: 0; color: #d5d8df; background: transparent; cursor: pointer; }
+.footer-inner button { padding: 10px 0; display: flex; align-items: center; gap: 7px; border: 0; color: var(--muted); background: transparent; cursor: pointer; }
 
 :focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 65%, transparent); outline-offset: 3px; border-radius: 4px; }
 
