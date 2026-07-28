@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fdfdfc" />
+    <meta name="description" content="Portfolio of Dzaky Habibi, an Informatics Engineering student and mathematics olympiad participant from Medan, open to internships, scholarships, and entry-level opportunities." />
+    <meta name="keywords" content="Dzaky Habibi, Informatics Engineering, software engineering student, mathematics olympiad, Medan, portfolio" />
+    <meta name="author" content="Dzaky Habibi" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://dzakyhabibi.dev/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:title" content="Dzaky Habibi — Informatics Engineering Student" />
+    <meta property="og:description" content="Analytical problem solver, mathematics olympiad participant, and Informatics Engineering student open to new opportunities." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/images/profile-placeholder.jpg" />
+    <meta property="og:image:alt" content="Portrait of Dzaky Habibi" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Dzaky Habibi — Portfolio" />
+    <meta name="twitter:description" content="Informatics Engineering student, analytical problem solver, and mathematics olympiad participant." />
+    <meta name="twitter:image" content="/images/profile-placeholder.jpg" />
+    <script>
+      (() => {
+        const saved = localStorage.getItem("theme");
+        const theme = saved === "light" || saved === "dark" ? saved : (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      })();
+    </script>
+    <title>Dzaky Habibi | Informatics Engineering Student</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
