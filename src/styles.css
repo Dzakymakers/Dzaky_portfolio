@@ -161,18 +161,18 @@ button { color: inherit; }
 .skill-card ul { margin: 0; padding: 19px 0 0; display: flex; flex-wrap: wrap; gap: 8px; border-top: 1px solid var(--border); list-style: none; }
 .skill-card li { padding: 7px 9px; border: 1px solid var(--border); border-radius: 7px; color: var(--muted); background: var(--surface-alt); font-size: .67rem; font-weight: 650; }
 
-.contact-section { padding: 108px 0; scroll-margin-top: 70px; color: white; background: #101216; }
+.contact-section { padding: 108px 0; scroll-margin-top: 70px; color: var(--text); background: var(--surface-alt); }
 .contact-inner { display: grid; grid-template-columns: 1.1fr .9fr; gap: 100px; align-items: end; }
 
-.contact-inner h2 span { color: #789bff; }
-.contact-inner > div:first-child > p:not(.eyebrow) { max-width: 550px; margin: 24px 0 30px; color: #aeb3bd; font-size: .9rem; line-height: 1.8; }
-.contact-button { color: #111; background: white; }
-.contact-links { border-top: 1px solid #30333b; }
-.contact-links > a { padding: 21px 3px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #30333b; transition: padding .2s, color .2s; }
-.contact-links > a:hover { padding-left: 7px; color: #87a8ff; }
+.contact-inner h2 span { color: var(--accent); }
+.contact-inner > div:first-child > p:not(.eyebrow) { max-width: 550px; margin: 24px 0 30px; color: var(--muted); font-size: .9rem; line-height: 1.8; }
+.contact-button { color: var(--bg); background: var(--text); }
+.contact-links { border-top: 1px solid var(--border); }
+.contact-links > a { padding: 21px 3px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); transition: padding .2s, color .2s; }
+.contact-links > a:hover { padding-left: 7px; color: var(--accent); }
 .contact-links > a > span { display: grid; grid-template-columns: 30px 1fr; align-items: center; }
-.contact-links svg { grid-row: span 2; color: #789bff; }
-.contact-links small { color: #858b97; font-size: .63rem; text-transform: uppercase; letter-spacing: .1em; }
+.contact-links svg { grid-row: span 2; color: var(--accent); }
+.contact-links small { color: var(--faint); font-size: .63rem; text-transform: uppercase; letter-spacing: .1em; }
 .contact-links strong { margin-top: 4px; font-size: .78rem; }
 .site-footer { color: #9ea4af; background: #090a0c; border-top: 1px solid #24262d; }
 .footer-inner { min-height: 105px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
