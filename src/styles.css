@@ -54,15 +54,12 @@ button { color: inherit; }
 
 .site-header { position: sticky; z-index: 100; top: 0; border-bottom: 1px solid color-mix(in srgb, var(--border) 80%, transparent); background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(18px); outline: none; }
 .nav-wrap { width: min(1240px, calc(100% - 40px)); height: 70px; margin: auto; display: flex; align-items: center; justify-content: space-between; }
-.wordmark { display: flex; align-items: center; gap: 11px; font-size: .91rem; letter-spacing: -.01em; }
-.wordmark > span { width: 33px; height: 33px; display: grid; place-items: center; border-radius: 9px; color: white; background: var(--text); font-size: .76rem; font-weight: 800; letter-spacing: -.04em; }
-:root[data-theme="dark"] .wordmark > span { color: #111; background: #fff; }
 .desktop-nav { display: flex; align-items: center; gap: 28px; }
 .desktop-nav a { position: relative; padding: 25px 0; color: var(--muted); font-size: .79rem; font-weight: 600; }
 .desktop-nav a:hover { color: var(--text); }
 .desktop-nav a::after { content: ""; position: absolute; right: 0; bottom: 19px; left: 0; height: 1px; background: var(--text); transform: scaleX(0); transition: transform .2s ease; }
 .desktop-nav a:hover::after { transform: scaleX(1); }
-.header-actions { display: flex; gap: 8px; }
+.header-actions { display: flex; gap: 8px; margin-left: auto; }
 .icon-button { width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); cursor: pointer; transition: border-color .2s, background .2s; }
 .icon-button:hover { border-color: var(--border-strong); background: var(--surface-alt); }
 .menu-button { display: none; }
@@ -76,7 +73,7 @@ button { color: inherit; }
 .availability span { width: 7px; height: 7px; border-radius: 50%; background: #2ab56f; box-shadow: 0 0 0 4px rgba(42,181,111,.12); }
 .hero-kicker { margin: 0 0 8px; color: var(--accent); font-size: .83rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
 .hero h1 { margin: 0; font-size: clamp(4rem, 7.4vw, 7.25rem); line-height: .85; letter-spacing: -.075em; }
-.hero h1 span { color: transparent; -webkit-text-stroke: 1.5px var(--text); }
+.hero h1 .name-outline { color: transparent; -webkit-text-stroke: 1.5px var(--text); }
 .tagline { max-width: 620px; margin: 31px 0 23px; color: var(--muted); font-size: clamp(.95rem, 1.3vw, 1.08rem); line-height: 1.7; font-weight: 520; }
 .tagline i { width: 4px; height: 4px; margin: 0 7px 3px; display: inline-block; border-radius: 50%; background: var(--accent); }
 .hero-meta { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-bottom: 32px; }
@@ -141,6 +138,25 @@ button { color: inherit; }
 .achievement-meta { margin-top: auto; padding-top: 25px; display: flex; justify-content: space-between; gap: 15px; border-top: 1px solid var(--border); color: var(--muted); font-size: .66rem; font-weight: 600; }
 .achievement-meta span { display: flex; align-items: center; gap: 5px; }
 
+.certificate-thumb { z-index: 1; position: relative; width: 100%; height: 210px; margin: 22px 0 20px; padding: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: zoom-in; border: 1px solid var(--border); border-radius: 11px; background: var(--bg, var(--surface)); }
+.certificate-thumb img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 5px; transition: transform .25s ease; }
+.certificate-thumb:hover img { transform: scale(1.03); }
+.certificate-zoom { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); padding: 6px 11px; display: inline-flex; align-items: center; gap: 6px; border-radius: 99px; color: #fff; background: rgba(15, 23, 42, .78); font-size: .66rem; font-weight: 650; opacity: 0; transition: opacity .2s ease; pointer-events: none; }
+.certificate-thumb:hover .certificate-zoom, .certificate-thumb:focus-visible .certificate-zoom { opacity: 1; }
+.certificate-thumb:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.lightbox { position: fixed; inset: 0; z-index: 100; padding: 24px; display: flex; align-items: center; justify-content: center; cursor: zoom-out; background: rgba(8, 11, 20, .88); }
+.lightbox img { max-width: min(100%, 960px); max-height: 100%; object-fit: contain; cursor: default; border-radius: 8px; box-shadow: 0 20px 60px rgba(0, 0, 0, .5); }
+.lightbox-close { position: absolute; top: 16px; right: 16px; width: 40px; height: 40px; display: grid; place-items: center; cursor: pointer; border: 0; border-radius: 50%; color: #fff; background: rgba(255, 255, 255, .16); }
+.lightbox-close:hover { background: rgba(255, 255, 255, .28); }
+
+.achievement-more { display: grid; grid-template-rows: 0fr; opacity: 0; visibility: hidden; transition: grid-template-rows .55s cubic-bezier(.4, 0, .2, 1), opacity .4s ease, visibility 0s linear .55s; }
+.achievement-more.open { grid-template-rows: 1fr; opacity: 1; visibility: visible; transition: grid-template-rows .55s cubic-bezier(.4, 0, .2, 1), opacity .4s ease .1s, visibility 0s; }
+.achievement-more-inner { min-height: 0; overflow: hidden; }
+.achievement-more-inner > .achievement-grid { padding: 17px 0 8px; }
+.achievement-toggle { margin-top: 28px; display: flex; justify-content: center; }
+.toggle-chevron { transition: transform .35s ease; }
+.toggle-chevron.open { transform: rotate(180deg); }
+
 .experience-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; }
 .feature-card { min-height: 310px; padding: 31px; display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: 15px; background: var(--surface); }
 .feature-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 11px; color: var(--accent); background: var(--accent-soft); }
@@ -153,7 +169,7 @@ button { color: inherit; }
 .seminar-card .place, .seminar-card .feature-content h3 { color: var(--text); }
 .seminar-card .feature-content > p:last-child { color: var(--muted); }
 
-.skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 17px; }
+.skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 17px; }
 .skill-card { padding: 27px; border: 1px solid var(--border); border-radius: 15px; background: var(--surface); }
 .skill-icon { width: 43px; height: 43px; margin-bottom: 31px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 10px; color: var(--accent); }
 .skill-card h3 { margin: 0 0 8px; font-size: 1.17rem; letter-spacing: -.025em; }
@@ -221,7 +237,6 @@ button { color: inherit; }
 }
 
 @media (max-width: 430px) {
-  .wordmark strong { display: none; }
   .hero-meta { flex-direction: column; }
   .hero-actions .button { width: 100%; }
   .orbit-note { display: none; }
@@ -239,10 +254,55 @@ button { color: inherit; }
   .achievement-meta { flex-direction: column; }
 }
 
+/* ---- Motion ---- */
+@keyframes rise { from { opacity: 0; translate: 0 22px; } }
+@keyframes fade-in { from { opacity: 0; } }
+@keyframes pop-in { from { opacity: 0; translate: 0 12px; scale: .94; } }
+.hero-glow { animation: fade-in 1.4s ease both; }
+.hero-copy > * { animation: rise .8s cubic-bezier(.2, .7, .2, 1) both; }
+.hero-copy > :nth-child(1) { animation-delay: .05s; }
+.hero-copy > :nth-child(2) { animation-delay: .15s; }
+.hero-copy > :nth-child(3) { animation-delay: .25s; }
+.hero-copy > :nth-child(4) { animation-delay: .38s; }
+.hero-copy > :nth-child(5) { animation-delay: .48s; }
+.hero-copy > :nth-child(6) { animation-delay: .58s; }
+.portrait-wrap { animation: rise 1s cubic-bezier(.2, .7, .2, 1) .25s both; }
+.orbit-note { animation: pop-in .6s cubic-bezier(.2, .7, .2, 1) both; }
+.note-one { animation-delay: 1s; }
+.note-two { animation-delay: 1.2s; }
+
+.js .reveal { opacity: 0; translate: 0 26px; transition: opacity .7s ease var(--d, 0s), translate .8s cubic-bezier(.2, .7, .2, 1) var(--d, 0s), transform .25s ease, box-shadow .25s ease, border-color .2s ease; }
+.js .reveal.is-visible { opacity: 1; translate: 0 0; }
+
+.stat-card, .skill-card, .feature-card { transition: transform .25s ease, box-shadow .25s ease, border-color .2s ease; }
+.skill-card li { transition: color .2s, border-color .2s, background .2s; }
+.button:active { transform: scale(.98); }
+@media (hover: hover) {
+  .stat-card:hover, .skill-card:hover, .feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+  .skill-card li:hover { color: var(--accent); border-color: var(--accent); }
+  .button.primary:hover { box-shadow: var(--shadow); }
+}
+.hero-copy > h1 { animation: none; }
+@keyframes caret-blink { 50% { opacity: 0; } }
+@keyframes caret-hide { to { opacity: 0; } }
+.type-caret { display: inline-block; width: .055em; height: .78em; margin-left: .05em; vertical-align: -.02em; border-radius: 2px; background: var(--accent); -webkit-text-stroke: 0; animation: caret-blink 1s steps(1) infinite; }
+.type-caret.is-done { animation: caret-blink 1s steps(1) 3, caret-hide .4s ease 3s forwards; }
+@keyframes theme-sweep {
+  from { clip-path: circle(0px at var(--vt-x, 50%) var(--vt-y, 0px)); }
+  to { clip-path: circle(var(--vt-r, 150vmax) at var(--vt-x, 50%) var(--vt-y, 0px)); }
+}
+::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+::view-transition-old(root) { z-index: 1; }
+::view-transition-new(root) { z-index: 2; clip-path: circle(0px at var(--vt-x, 50%) var(--vt-y, 0px)); animation: theme-sweep .8s cubic-bezier(.65, 0, .35, 1) both; }
+.theme-transition, .theme-transition *, .theme-transition *::before, .theme-transition *::after { transition: background-color .35s ease, color .35s ease, border-color .35s ease, fill .35s ease, stroke .35s ease !important; }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-  .button:hover, .achievement-card:hover, .timeline-card:hover { transform: none; }
+  .button:hover, .achievement-card:hover, .timeline-card:hover, .stat-card:hover, .skill-card:hover, .feature-card:hover { transform: none; }
+  .js .reveal { opacity: 1; translate: none; }
+  .hero-glow, .hero-copy > *, .portrait-wrap, .orbit-note { animation: none; }
+  .type-caret { display: none; }
 }
 
 @media print {
@@ -256,9 +316,7 @@ button { color: inherit; }
   .achievement-card, .feature-card, .skill-card, .timeline-card { break-inside: avoid; box-shadow: none; }
 }
 
-.wordmark-logo {
-  width: 33px;
-  height: 33px;
-  border-radius: 9px;
-  object-fit: cover;
+@media print {
+  .js .reveal { opacity: 1 !important; translate: none !important; }
+  *, *::before, *::after { animation: none !important; }
 }

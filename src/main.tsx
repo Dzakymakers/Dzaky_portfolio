@@ -1,10 +1,13 @@
-import { StrictMode, useEffect, useRef, useState, type ReactNode } from "react";
+import { StrictMode, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import {
   ArrowUp,
   ArrowUpRight,
   Brain,
   CalendarDays,
+  ChevronDown,
+  Code,
   Download,
   GraduationCap,
   Languages,
@@ -15,11 +18,13 @@ import {
   Moon,
   Phone,
   Presentation,
-  Sparkles,
+  Rocket,
+  Sigma,
   Sun,
   Trophy,
   Users,
   X,
+  ZoomIn,
 } from "lucide-react";
 import "./styles.css";
 
@@ -62,20 +67,46 @@ const achievements = [
     title: "Indonesia Social & Science Competition (ISSC) 2025",
     organizer: "HIMAFIS UNIMED",
     date: "November 2025",
+    certificate: "/images/certificates/issc-2025.jpg",
   },
   {
     rank: "Top 10",
     title: "Senior High School Academic Olympiad (SEHSCO) 2026",
     organizer: "HIMATEK USU",
     date: "January 2026",
+    certificate: "/images/certificates/sehsco-2026.jpg",
   },
   {
     rank: "Top 10",
     title: "HIMATEK USU Student Competition (HUSC) 2025",
     organizer: "HIMATEK USU",
     date: "May 2025",
+    certificate: "/images/certificates/husc-2025.jpg",
+  },
+  {
+    rank: "Silver",
+    title: "Indonesian Olympiad Battle (IOB) Math Prelim 2 Season 1 — Grade 12",
+    organizer: "Indonesian Olympiad Battle",
+    date: "January 2026",
+    certificate: "/images/certificates/iob-2026.jpg",
+  },
+  {
+    rank: "Top 10",
+    title: "International Edu Science Competition (IESC) 2025",
+    organizer: "Elite Scholars ID × POPI.IDN",
+    date: "October 2025",
+    certificate: "/images/certificates/iesc-2025.jpg",
+  },
+  {
+    rank: "Top 10",
+    title: "Indonesia Student Olympiad (INASO) 2025",
+    organizer: "INASO × POPI.IDN",
+    date: "July 2025",
+    certificate: "/images/certificates/inaso-2025.jpg",
   },
 ];
+
+const featuredAchievementCount = 3;
 
 const stats: { value: number; label: string; icon: IconType }[] = [
   { value: 2, label: "Education", icon: GraduationCap },
@@ -86,10 +117,22 @@ const stats: { value: number; label: string; icon: IconType }[] = [
 
 const skills: { title: string; icon: IconType; description?: string; items: string[] }[] = [
   {
-    title: "Analytical Skills",
-    icon: Brain,
-    description: "A structured approach to complex challenges.",
-    items: ["Mathematical reasoning", "Problem-solving"],
+    title: "Mathematics & Analytical",
+    icon: Sigma,
+    description: "Olympiad-level problem solving and a structured approach to complex challenges.",
+    items: ["Mathematical reasoning", "Problem-solving", "Logical reasoning", "Olympiad competitor"],
+  },
+  {
+    title: "Currently Learning",
+    icon: Code,
+    description: "Building a technical foundation step by step.",
+    items: ["Python — Learning", "Web Development — Learning"],
+  },
+  {
+    title: "Soft Skills & Initiative",
+    icon: Rocket,
+    description: "Proactive, dependable, and always looking to grow beyond the classroom.",
+    items: ["Teamwork", "Adaptability", "Attention to Detail", "Discipline", "Self-directed learning", "Seeking competitions & seminars"],
   },
   {
     title: "Languages",
@@ -97,13 +140,45 @@ const skills: { title: string; icon: IconType; description?: string; items: stri
     description: "Clear written communication and comprehension.",
     items: ["Bahasa Indonesia — Native", "English — Passive (Reading & Writing)"],
   },
-  {
-    title: "Soft Skills",
-    icon: Sparkles,
-    description: "Dependable qualities for learning and collaboration.",
-    items: ["Teamwork", "Adaptability", "Attention to Detail", "Discipline", "Willingness to Learn"],
-  },
 ];
+
+function TypedName({ lines }: { lines: [string, string] }) {
+  const total = lines[0].length + lines[1].length;
+  const [count, setCount] = useState(() =>
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches ? total : 0,
+  );
+
+  useEffect(() => {
+    if (count >= total) return;
+    const delay = count === 0 ? 800 : count === lines[0].length ? 450 : 150 + Math.random() * 80;
+    const timer = window.setTimeout(() => setCount((value) => value + 1), delay);
+    return () => window.clearTimeout(timer);
+  }, [count, total, lines]);
+
+  const first = lines[0].slice(0, Math.min(count, lines[0].length));
+  const second = lines[1].slice(0, Math.max(0, count - lines[0].length));
+  const done = count >= total;
+  const caret = <span className={`type-caret${done ? " is-done" : ""}`} />;
+
+  return (
+    <>
+      <span aria-hidden="true">{first}{count <= lines[0].length && caret}{"\u200b"}</span>
+      <br aria-hidden="true" />
+      <span className="name-outline" aria-hidden="true">{second}{count > lines[0].length && caret}{"\u200b"}</span>
+    </>
+  );
+}
+
+const revealSelector = [
+  ".section-heading",
+  ".about-copy",
+  ".stat-card",
+  ".timeline-card",
+  ".achievement-card",
+  ".feature-card",
+  ".skill-card",
+  ".contact-inner > *",
+].join(", ");
 
 function SectionHeading({ eyebrow, title, description }: SectionHeadingProps) {
   return (
@@ -181,14 +256,82 @@ function App() {
     document.documentElement.dataset.theme === "dark" ? "dark" : "light",
   );
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showMoreAchievements, setShowMoreAchievements] = useState(false);
+  const [lightbox, setLightbox] = useState<{ src: string; title: string } | null>(null);
   const headerRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    document.documentElement.style.colorScheme = theme;
+    const root = document.documentElement;
+    root.dataset.theme = theme;
+    root.style.colorScheme = theme;
     localStorage.setItem("theme", theme);
   }, [theme]);
+
+  const toggleTheme = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const next: Theme = theme === "light" ? "dark" : "light";
+    const root = document.documentElement;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (reduceMotion) {
+      setTheme(next);
+      return;
+    }
+
+    if (typeof document.startViewTransition !== "function") {
+      root.classList.add("theme-transition");
+      setTheme(next);
+      window.setTimeout(() => root.classList.remove("theme-transition"), 450);
+      return;
+    }
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    const radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
+    root.style.setProperty("--vt-x", `${x}px`);
+    root.style.setProperty("--vt-y", `${y}px`);
+    root.style.setProperty("--vt-r", `${radius}px`);
+
+    const transition = document.startViewTransition(() => {
+      root.dataset.theme = next;
+      root.style.colorScheme = next;
+      flushSync(() => setTheme(next));
+    });
+
+    transition.finished.finally(() => {
+      root.style.removeProperty("--vt-x");
+      root.style.removeProperty("--vt-y");
+      root.style.removeProperty("--vt-r");
+    });
+  };
+
+  useLayoutEffect(() => {
+    const targets = Array.from(document.querySelectorAll<HTMLElement>(revealSelector));
+    const counts = new Map<Element | null, number>();
+    targets.forEach((el) => {
+      const index = counts.get(el.parentElement) ?? 0;
+      counts.set(el.parentElement, index + 1);
+      el.classList.add("reveal");
+      el.style.setProperty("--d", `${Math.min(index, 5) * 0.08}s`);
+    });
+    if (!("IntersectionObserver" in window)) {
+      targets.forEach((el) => el.classList.add("is-visible"));
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" },
+    );
+    targets.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -202,6 +345,37 @@ function App() {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [menuOpen]);
 
+  useEffect(() => {
+    if (!lightbox) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setLightbox(null);
+    };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [lightbox]);
+
+  const renderAchievement = (achievement: (typeof achievements)[number], index: number) => (
+    <article className="achievement-card" key={achievement.title}>
+      <div className="achievement-head"><span className="rank">{achievement.rank}</span><span className="card-number">{String(index + 1).padStart(2, "0")}</span></div>
+      <button
+        type="button"
+        className="certificate-thumb"
+        onClick={() => setLightbox({ src: achievement.certificate, title: achievement.title })}
+        aria-label={`Lihat sertifikat ${achievement.title}`}
+      >
+        <img src={achievement.certificate} alt={`Sertifikat ${achievement.title}`} loading="lazy" />
+        <span className="certificate-zoom"><ZoomIn size={15} aria-hidden="true" /> Lihat sertifikat</span>
+      </button>
+      <p className="category">Mathematics Olympiad</p>
+      <h3>{achievement.title}</h3>
+      <div className="achievement-meta"><span>{achievement.organizer}</span><span><CalendarDays size={14} /> {achievement.date}</span></div>
+    </article>
+  );
+
   const closeMenu = () => setMenuOpen(false);
   const backToTop = () => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -214,10 +388,6 @@ function App() {
       <a className="skip-link" href="#main-content">Skip to content</a>
       <header className="site-header" ref={headerRef} tabIndex={-1} id="top">
         <div className="nav-wrap">
-          <a href="#top" className="wordmark" aria-label="Dzaky Habibi, home" onClick={closeMenu}>
-            <img src="/images/logo.jpg" alt="Dzaky Habibi logo" className="wordmark-logo" />
-            <strong>Dzaky Habibi</strong>
-          </a>
           <nav className="desktop-nav" aria-label="Main navigation">
             {navigation.map(([label, id]) => <a key={id} href={`#${id}`}>{label}</a>)}
           </nav>
@@ -225,7 +395,7 @@ function App() {
             <button
               className="icon-button"
               type="button"
-              onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+              onClick={toggleTheme}
               aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
               title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
             >
@@ -263,7 +433,7 @@ function App() {
             <div className="hero-copy">
               <div className="availability"><span /> Open to internships & opportunities</div>
               <p className="hero-kicker">Hello, I’m</p>
-              <h1 id="hero-title">Dzaky<br /><span>Habibi.</span></h1>
+              <h1 id="hero-title" aria-label="Dzaky Habibi."><TypedName lines={["Dzaky", "Habibi."]} /></h1>
               <p className="tagline">Informatics Engineering Student <i /> Problem Solver <i /> Mathematics Olympiad Participant</p>
               <div className="hero-meta">
                 <a href="https://maps.google.com/?q=Medan,Sumatera+Utara" target="_blank" rel="noreferrer"><MapPin size={16} /> Medan, Sumatera Utara</a>
@@ -327,18 +497,36 @@ function App() {
           <div className="container">
             <SectionHeading eyebrow="03 / Achievements" title="Mathematics, measured in milestones." description="National and regional olympiad results reflecting consistent analytical performance." />
             <div className="achievement-grid">
-              {achievements.map((achievement, index) => (
-                <article className="achievement-card" key={achievement.title}>
-                  <div className="achievement-head"><span className="rank">{achievement.rank}</span><span className="card-number">0{index + 1}</span></div>
-                  <Trophy className="trophy-icon" size={29} aria-hidden="true" />
-                  <p className="category">Mathematics Olympiad</p>
-                  <h3>{achievement.title}</h3>
-                  <div className="achievement-meta"><span>{achievement.organizer}</span><span><CalendarDays size={14} /> {achievement.date}</span></div>
-                </article>
-              ))}
+              {achievements.slice(0, featuredAchievementCount).map((achievement, index) => renderAchievement(achievement, index))}
+            </div>
+            <div className={`achievement-more${showMoreAchievements ? " open" : ""}`} id="more-achievements" inert={!showMoreAchievements}>
+              <div className="achievement-more-inner">
+                <div className="achievement-grid">
+                  {achievements.slice(featuredAchievementCount).map((achievement, index) => renderAchievement(achievement, index + featuredAchievementCount))}
+                </div>
+              </div>
+            </div>
+            <div className="achievement-toggle">
+              <button
+                type="button"
+                className="button secondary"
+                onClick={() => setShowMoreAchievements((open) => !open)}
+                aria-expanded={showMoreAchievements}
+                aria-controls="more-achievements"
+              >
+                {showMoreAchievements ? "See less" : `See more (${achievements.length - featuredAchievementCount})`}
+                <ChevronDown size={16} className={`toggle-chevron${showMoreAchievements ? " open" : ""}`} aria-hidden="true" />
+              </button>
             </div>
           </div>
         </section>
+
+        {lightbox && (
+          <div className="lightbox" role="dialog" aria-modal="true" aria-label={lightbox.title} onClick={() => setLightbox(null)}>
+            <button type="button" className="lightbox-close" onClick={() => setLightbox(null)} aria-label="Tutup"><X size={20} /></button>
+            <img src={lightbox.src} alt={`Sertifikat ${lightbox.title}`} onClick={(event) => event.stopPropagation()} />
+          </div>
+        )}
 
         <section className="section alternate" id="experience">
           <div className="container">
@@ -355,6 +543,15 @@ function App() {
               </article>
               <article className="feature-card seminar-card">
                 <div className="feature-icon"><Presentation size={23} /></div>
+                <button
+                  type="button"
+                  className="certificate-thumb"
+                  onClick={() => setLightbox({ src: "/images/certificates/data-or-die-2025.jpg", title: "“Data or Die” Seminar" })}
+                  aria-label="Lihat sertifikat “Data or Die” Seminar"
+                >
+                  <img src="/images/certificates/data-or-die-2025.jpg" alt="Sertifikat peserta “Data or Die” Seminar" loading="lazy" />
+                  <span className="certificate-zoom"><ZoomIn size={15} aria-hidden="true" /> Lihat sertifikat</span>
+                </button>
                 <div className="feature-content">
                   <p className="category">Seminar & Training</p>
                   <h3>“Data or Die” Seminar</h3>
