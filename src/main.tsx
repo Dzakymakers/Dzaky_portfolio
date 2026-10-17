@@ -110,7 +110,7 @@ const featuredAchievementCount = 3;
 
 const stats: { value: number; label: string; icon: IconType }[] = [
   { value: 2, label: "Education", icon: GraduationCap },
-  { value: 3, label: "Achievements", icon: Trophy },
+  { value: 6, label: "Achievements", icon: Trophy },
   { value: 1, label: "Organization", icon: Users },
   { value: 1, label: "Seminar", icon: Presentation },
 ];
@@ -313,7 +313,7 @@ function App() {
       const index = counts.get(el.parentElement) ?? 0;
       counts.set(el.parentElement, index + 1);
       el.classList.add("reveal");
-      el.style.setProperty("--d", `${Math.min(index, 5) * 0.08}s`);
+      el.style.setProperty("--d", `${Math.min(index, 5) * 0.15}s`);
     });
     if (!("IntersectionObserver" in window)) {
       targets.forEach((el) => el.classList.add("is-visible"));
@@ -388,9 +388,21 @@ function App() {
       <a className="skip-link" href="#main-content">Skip to content</a>
       <header className="site-header" ref={headerRef} tabIndex={-1} id="top">
         <div className="nav-wrap">
-          <nav className="desktop-nav" aria-label="Main navigation">
-            {navigation.map(([label, id]) => <a key={id} href={`#${id}`}>{label}</a>)}
-          </nav>
+          <button
+            ref={menuButtonRef}
+            className="icon-button menu-button"
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+          >
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+          <a href="#top" className="nav-logo" aria-label="Dzaky Habibi, back to top" onClick={closeMenu}>
+            <img className="logo-light" src="/images/logo-light.png" alt="" />
+            <img className="logo-dark" src="/images/logo-dark.png" alt="" />
+          </a>
           <div className="header-actions">
             <button
               className="icon-button"
@@ -401,23 +413,12 @@ function App() {
             >
               {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
             </button>
-            <button
-              ref={menuButtonRef}
-              className="icon-button menu-button"
-              type="button"
-              onClick={() => setMenuOpen((open) => !open)}
-              aria-expanded={menuOpen}
-              aria-controls="mobile-menu"
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
-            >
-              {menuOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
           </div>
         </div>
         <nav
           id="mobile-menu"
           className={`mobile-nav ${menuOpen ? "open" : ""}`}
-          aria-label="Mobile navigation"
+          aria-label="Main navigation"
           aria-hidden={!menuOpen}
         >
           {navigation.map(([label, id]) => (
@@ -449,7 +450,7 @@ function App() {
                 <img src="/images/profile-placeholder.jpg" alt="Portrait placeholder for Dzaky Habibi" width="720" height="900" fetchPriority="high" />
                 <div className="portrait-label"><span>Based in</span><strong>Medan, Indonesia</strong></div>
               </div>
-              <div className="orbit-note note-one"><Trophy size={16} /><span><strong>3×</strong> Math achievements</span></div>
+              <div className="orbit-note note-one"><Trophy size={16} /><span><strong>6×</strong> Math achievements</span></div>
               <div className="orbit-note note-two"><Brain size={16} /><span>Analytical thinker</span></div>
             </div>
           </div>
