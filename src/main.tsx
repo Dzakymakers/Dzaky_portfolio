@@ -251,6 +251,165 @@ function ActionLink({
   );
 }
 
+
+const swarmPalette = ["#ff5c7a", "#4f9cff", "#16b98a", "#a47cff"];
+
+function SwarmRebuildExperience() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [enabled, setEnabled] = useState(true);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const context = canvas?.getContext("2d");
+    if (!canvas || !context) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    type CursorAgent = {
+      x: number; y: number; targetX: number; targetY: number;
+      color: string; name: string;
+      trail: Array<{ x: number; y: number }>;
+      nextTargetAt: number;
+    };
+
+    const agents: CursorAgent[] = swarmPalette.map((color, index) => ({
+      x: window.innerWidth * (0.2 + index * 0.18),
+      y: window.innerHeight * (0.25 + (index % 2) * 0.35),
+      targetX: window.innerWidth * (0.2 + index * 0.18),
+      targetY: window.innerHeight * (0.25 + (index % 2) * 0.35),
+      color,
+      name: ["Design", "Layout", "Type", "Motion"][index],
+      trail: [],
+      nextTargetAt: 0,
+    }));
+
+    let frame = 0;
+    let width = 0;
+    let height = 0;
+    let pixelRatio = 1;
+    let lastTargetRefresh = 0;
+    let targets: DOMRect[] = [];
+
+    const resize = () => {
+      pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = Math.round(width * pixelRatio);
+      canvas.height = Math.round(height * pixelRatio);
+      canvas.style.width = width + "px";
+      canvas.style.height = height + "px";
+      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    };
+
+    const refreshTargets = () => {
+      targets = Array.from(document.querySelectorAll<HTMLElement>(
+        ".reveal.is-visible, .hero-copy > *, .portrait-frame",
+      ))
+        .map((element) => element.getBoundingClientRect())
+        .filter((rect) => rect.width > 24 && rect.height > 18
+          && rect.bottom > 0 && rect.top < height
+          && rect.right > 0 && rect.left < width);
+    };
+
+    const drawCursor = (agent: CursorAgent) => {
+      const { x, y, color, name, trail } = agent;
+      if (trail.length > 1) {
+        context.beginPath();
+        context.moveTo(trail[0].x, trail[0].y);
+        for (let index = 1; index < trail.length; index += 1) {
+          context.lineTo(trail[index].x, trail[index].y);
+        }
+        context.strokeStyle = color + "55";
+        context.lineWidth = 1.5;
+        context.stroke();
+      }
+      context.save();
+      context.translate(x, y);
+      context.shadowColor = color + "66";
+      context.shadowBlur = 10;
+      context.beginPath();
+      context.moveTo(0, 0);
+      context.lineTo(0, 19);
+      context.lineTo(5, 14);
+      context.lineTo(10, 23);
+      context.lineTo(14, 21);
+      context.lineTo(9, 12);
+      context.lineTo(17, 11);
+      context.closePath();
+      context.fillStyle = color;
+      context.fill();
+      context.lineWidth = 1.2;
+      context.strokeStyle = "#ffffff";
+      context.stroke();
+      context.shadowBlur = 0;
+      context.font = "600 10px Inter, system-ui, sans-serif";
+      const labelWidth = context.measureText(name).width + 14;
+      context.fillStyle = color;
+      context.beginPath();
+      context.roundRect(14, 18, labelWidth, 19, 5);
+      context.fill();
+      context.fillStyle = "#ffffff";
+      context.fillText(name, 21, 31);
+      context.restore();
+    };
+
+    const animate = (now: number) => {
+      if (!enabled) {
+        context.clearRect(0, 0, width, height);
+        frame = window.requestAnimationFrame(animate);
+        return;
+      }
+      if (now - lastTargetRefresh > 700) {
+        refreshTargets();
+        lastTargetRefresh = now;
+      }
+      context.clearRect(0, 0, width, height);
+      agents.forEach((agent, index) => {
+        if (now >= agent.nextTargetAt && targets.length > 0) {
+          const target = targets[(Math.floor(now / 1200) + index * 3) % targets.length];
+          const spreadX = Math.min(24, target.width * 0.16);
+          const spreadY = Math.min(18, target.height * 0.2);
+          agent.targetX = target.left + target.width * (0.35 + (index % 3) * 0.15)
+            + (Math.random() - 0.5) * spreadX;
+          agent.targetY = target.top + target.height * (0.35 + (index % 2) * 0.25)
+            + (Math.random() - 0.5) * spreadY;
+          agent.nextTargetAt = now + 900 + index * 170;
+        }
+        agent.x += (agent.targetX - agent.x) * 0.035;
+        agent.y += (agent.targetY - agent.y) * 0.035;
+        agent.trail.push({ x: agent.x, y: agent.y });
+        if (agent.trail.length > 14) agent.trail.shift();
+        drawCursor(agent);
+      });
+      frame = window.requestAnimationFrame(animate);
+    };
+
+    resize();
+    refreshTargets();
+    window.addEventListener("resize", resize);
+    window.addEventListener("scroll", refreshTargets, { passive: true });
+    frame = window.requestAnimationFrame(animate);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("scroll", refreshTargets);
+      context.clearRect(0, 0, width, height);
+    };
+  }, [enabled]);
+
+  return (
+    <>
+      <canvas ref={canvasRef} className="swarm-canvas" aria-hidden="true" />
+      <div className="swarm-control" aria-label="Swarm rebuild animation controls">
+        <span className={enabled ? "swarm-live-dot active" : "swarm-live-dot"} />
+        <span className="swarm-control-label">{enabled ? "SWARM / LIVE" : "SWARM / PAUSED"}</span>
+        <button type="button" onClick={() => setEnabled((value) => !value)}>
+          {enabled ? "Pause" : "Resume"}
+        </button>
+      </div>
+    </>
+  );
+}
+
 function App() {
   const [theme, setTheme] = useState<Theme>(() =>
     document.documentElement.dataset.theme === "dark" ? "dark" : "light",
@@ -385,6 +544,7 @@ function App() {
 
   return (
     <div className="site-shell">
+      <SwarmRebuildExperience />
       <a className="skip-link" href="#main-content">Skip to content</a>
       <header className="site-header" ref={headerRef} tabIndex={-1} id="top">
         <div className="nav-wrap">
