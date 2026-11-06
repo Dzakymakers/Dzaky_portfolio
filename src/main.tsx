@@ -262,7 +262,10 @@ function SwarmRebuildExperience() {
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
     if (!canvas || !context) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!enabled || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      return;
+    }
 
     type CursorAgent = {
       x: number; y: number; targetX: number; targetY: number;
@@ -353,11 +356,6 @@ function SwarmRebuildExperience() {
     };
 
     const animate = (now: number) => {
-      if (!enabled) {
-        context.clearRect(0, 0, width, height);
-        frame = window.requestAnimationFrame(animate);
-        return;
-      }
       if (now - lastTargetRefresh > 700) {
         refreshTargets();
         lastTargetRefresh = now;
