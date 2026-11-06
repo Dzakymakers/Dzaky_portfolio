@@ -323,3 +323,43 @@ button { color: inherit; }
   .js .reveal { opacity: 1 !important; translate: none !important; }
   *, *::before, *::after { animation: none !important; }
 }
+
+
+/* Swarm-inspired live reconstruction layer — original implementation */
+.swarm-canvas {
+  position: fixed; inset: 0; z-index: 80; pointer-events: none; overflow: hidden;
+}
+.swarm-control {
+  position: fixed; z-index: 81; right: 18px; bottom: 18px;
+  display: flex; align-items: center; gap: 9px; padding: 9px 11px;
+  border: 1px solid var(--border-strong); border-radius: 999px;
+  color: var(--text); background: color-mix(in srgb, var(--surface) 88%, transparent);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, .09); backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  font: 700 9px/1 system-ui, sans-serif; letter-spacing: .09em;
+}
+.swarm-live-dot { width: 7px; height: 7px; flex: 0 0 auto; border-radius: 50%; background: #9ca3af; }
+.swarm-live-dot.active {
+  background: #16b98a;
+  box-shadow: 0 0 0 3px color-mix(in srgb, #16b98a 17%, transparent);
+  animation: swarm-pulse 1.8s ease-in-out infinite;
+}
+.swarm-control-label { white-space: nowrap; }
+.swarm-control button {
+  padding: 5px 8px; border: 0; border-radius: 999px;
+  color: var(--bg); background: var(--text); font: inherit; letter-spacing: 0; cursor: pointer;
+}
+@keyframes swarm-pulse {
+  50% { box-shadow: 0 0 0 6px color-mix(in srgb, #16b98a 7%, transparent); }
+}
+@media (max-width: 700px) {
+  .swarm-canvas { opacity: .65; }
+  .swarm-control { right: 12px; bottom: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .swarm-canvas { display: none; }
+  .swarm-live-dot.active { animation: none; }
+}
+@media print {
+  .swarm-canvas, .swarm-control { display: none !important; }
+}
