@@ -22,6 +22,11 @@
     <meta name="twitter:title" content="Dzaky Habibi — Portfolio" />
     <meta name="twitter:description" content="Informatics Engineering student, analytical problem solver, and mathematics olympiad participant." />
     <meta name="twitter:image" content="/images/profile-placeholder.jpg" />
+    <script src="/cursor-swarm.js"></script>
+    <script>
+      // Hide the page before React mounts so CursorSwarm can reveal it as it builds.
+      window.CursorSwarm?.cloak();
+    </script>
     <script>
       (() => {
         const saved = localStorage.getItem("theme");
