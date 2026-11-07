@@ -262,48 +262,35 @@ function App() {
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    let cancelled = false;
-    let swarm: { destroy: () => void } | undefined;
-    const script = document.createElement("script");
-    script.src = "/cursor-swarm.js";
-    script.async = true;
-    script.onload = () => {
-      if (cancelled) return;
-      const CursorSwarm = (window as Window & {
-        CursorSwarm?: new (options: Record<string, unknown>) => { init: () => { destroy: () => void } };
-      }).CursorSwarm;
-      if (!CursorSwarm) return;
-      swarm = new CursorSwarm({
-        root: "#main-content",
-        cursors: window.matchMedia("(max-width: 640px)").matches ? 2 : 4,
-        palette: ["#7257F5", "#00A88F", "#F28B50", "#E35D91"],
-        startPosition: "corners",
-        speed: 1,
-        adaptiveSpeed: true,
-        deconstruct: true,
-        exitAfterBuild: false,
-        copyPaste: 0.2,
-        relocation: 0.12,
-        hud: true,
-        hudPosition: "bottom-right",
-        labels: true,
-        sparks: true,
-        respectReducedMotion: true,
-        ignore: ".lightbox, .skip-link",
-      }).init();
-    };
-    script.onerror = () => {
-      console.warn("CursorSwarm could not be loaded; the portfolio remains fully usable.");
-    };
-    document.body.appendChild(script);
-    return () => {
-      cancelled = true;
-      swarm?.destroy();
-      script.remove();
-    };
+    const CursorSwarm = (window as Window & {
+      CursorSwarm?: new (options: Record<string, unknown>) => { init: () => { destroy: () => void } };
+    }).CursorSwarm;
+    if (!CursorSwarm) return;
+
+    const swarm = new CursorSwarm({
+      root: "#main-content",
+      cursors: window.matchMedia("(max-width: 640px)").matches ? 2 : 4,
+      palette: ["#7257F5", "#00A88F", "#F28B50", "#E35D91"],
+      startPosition: "corners",
+      speed: 1,
+      adaptiveSpeed: true,
+      deconstruct: true,
+      exitAfterBuild: false,
+      copyPaste: 0.2,
+      relocation: 0.12,
+      hud: true,
+      hudPosition: "bottom-right",
+      labels: true,
+      sparks: true,
+      respectReducedMotion: true,
+      ignore: ".lightbox, .skip-link",
+    }).init();
+
+    return () => swarm.destroy();
   }, []);
 
   useEffect(() => {
+    const root = document.documentElement;  useEffect(() => {
     const root = document.documentElement;
     root.dataset.theme = theme;
     root.style.colorScheme = theme;
