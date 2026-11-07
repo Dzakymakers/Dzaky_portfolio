@@ -290,7 +290,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const root = document.documentElement;  useEffect(() => {
     const root = document.documentElement;
     root.dataset.theme = theme;
     root.style.colorScheme = theme;
